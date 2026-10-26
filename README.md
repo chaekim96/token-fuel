@@ -6,13 +6,17 @@ Current version: v1.1
 
 ## Screenshots
 
+![TokenFuel floating over the desktop](docs/screenshots/in-context.png)
+
+TokenFuel in action: the menu bar item (gas pump, bar, percent left) and the floating window, live-tracking a Codex chat and a Claude Code session at the same time.
+
 ![Floating window](docs/screenshots/floating-window.png)
 
-The floating window: session title, fuel level, percent left, tokens left, estimated turns left, recent usage trend and last-turn cost.
+The floating window: one row per tool, with the session name, fuel level, percent and tokens left, estimated turns left, the last 12 turns and the last turn's size.
 
 ![Menu bar](docs/screenshots/menu-bar.png)
 
-The menu-bar item: gas-pump icon, five-cell bar and percent left for the most recently active session.
+The menu bar item: the most recently active session at a glance.
 
 ## What it shows
 
@@ -41,7 +45,7 @@ The menu-bar item: gas-pump icon, five-cell bar and percent left for the most re
 
 **How it measures (exact sources only)**
 - **Claude Code:** reads `~/.claude/projects/*/*.jsonl`. Context used is the input, cache-write and cache-read tokens of the latest main-conversation reply. The window is 1M for Opus 5 models, `[1m]` models, or any session that has passed 200k; otherwise it is 200k. A turn starts with each message you send.
-- **Codex:** reads `~/.codex/sessions/<last 3 days>/*.jsonl`. Context used is Codex's own `last_token_usage.total_tokens`, and the window is Codex's own `model_context_window`. A turn starts at each `task_started` event. Sub-agent threads are skipped.
+- **Codex:** reads `~/.codex/sessions/YYYY/MM/DD/*.jsonl`, any day folder, since a resumed chat keeps writing to its original file. Context used is Codex's own `last_token_usage.total_tokens`, and the window is Codex's own `model_context_window`. A turn starts at each `task_started` event. Sub-agent threads are skipped.
 - **Updates:** it checks every 2 seconds and only re-reads files that changed. It uses about 40MB of memory and close to 0% CPU.
 
 ## Install
@@ -113,4 +117,3 @@ pkill -x TokenFuel; rm -f ~/Library/LaunchAgents/local.token-fuel.plist; default
 - **Window size for Claude models is a rule:** 1M for Opus 5 and `[1m]` models, or once a session passes 200k; otherwise 200k. A non-Opus model with a 1M window reads low until it passes 200k.
 - **Crowded menu bars:** if the menu bar is very full, macOS may still hide some icon (possibly this one). ⌘-drag icons to rearrange them.
 - **First turn of a session:** it starts counting from the first reply, so the system prompt isn't counted as part of turn 1.
-- **Codex sessions resumed after 3+ days** aren't picked up until they write to a new log file.

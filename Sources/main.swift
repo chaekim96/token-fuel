@@ -235,9 +235,14 @@ func scanAll() -> [Gauge] {
     for d in (try? fm.contentsOfDirectory(atPath: claudeProjects)) ?? [] {
         files += listJSONL("\(claudeProjects)/\(d)").map { ($0, false) }
     }
-    let day = DateFormatter(); day.dateFormat = "yyyy/MM/dd"
-    for back in 0..<3 {
-        files += listJSONL("\(codexSessions)/\(day.string(from: now.addingTimeInterval(Double(-back) * 86_400)))").map { ($0, true) }
+    // Codex keeps appending to a resumed chat's original YYYY/MM/DD file, so look in every
+    // day folder; the modified-time check below keeps only the active ones.
+    for y in (try? fm.contentsOfDirectory(atPath: codexSessions)) ?? [] {
+        for m in (try? fm.contentsOfDirectory(atPath: "\(codexSessions)/\(y)")) ?? [] {
+            for d in (try? fm.contentsOfDirectory(atPath: "\(codexSessions)/\(y)/\(m)")) ?? [] {
+                files += listJSONL("\(codexSessions)/\(y)/\(m)/\(d)").map { ($0, true) }
+            }
+        }
     }
     var out: [Gauge] = []
     for (path, isCodex) in files {
@@ -545,7 +550,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSWind
             stack.addArrangedSubview(label(gaugeLine(g)))
         }
         stack.layoutSubtreeIfNeeded()
-        let size = stack.fittingSize
+        var size = stack.fittingSize
+        // fittingSize can come up short for mixed-font text, which clipped the line end; measure the text itself.
+        let textWidth = stack.arrangedSubviews.compactMap { ($0 as? NSTextField)?.attributedStringValue.size().width }.max() ?? 0
+        size.width = max(size.width, ceil(textWidth) + 4 + stack.edgeInsets.left + stack.edgeInsets.right)
 
         // Keep the top-right corner where the user left it.
         let screen = NSScreen.main?.visibleFrame ?? NSRect(x: 0, y: 0, width: 1440, height: 900)
