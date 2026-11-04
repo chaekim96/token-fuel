@@ -20,6 +20,9 @@ mkdir -p "${RESOURCES_PATH}"
 # Copy Info.plist
 cp "${SCRIPT_DIR}/Info.plist" "${CONTENTS_PATH}/"
 
+# App icon (Electric color seal, brand/AppIcon.icns)
+cp "${SCRIPT_DIR}/brand/AppIcon.icns" "${RESOURCES_PATH}/"
+
 # Compile Swift
 echo "Compiling Swift..."
 swiftc -O \
