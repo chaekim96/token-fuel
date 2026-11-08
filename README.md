@@ -1,4 +1,7 @@
-# Token Fuel
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="brand/readme/header-dark.png">
+  <img src="brand/readme/header-light.png" alt="Token-Fuel: Seeing how much context is left before a session runs out.">
+</picture>
 
 A live fuel gauge for your AI coding sessions. It shows how much of the context window is left in **Claude Code** (terminal and the Claude desktop app's Code tab) and **Codex** (CLI and the Codex app). It sits in the macOS menu bar and in an optional floating window that stays on top of every app. It reads the exact token counts each tool already writes to your Mac and never estimates.
 
@@ -117,3 +120,7 @@ pkill -x TokenFuel; rm -f ~/Library/LaunchAgents/local.token-fuel.plist; default
 - **Window size for Claude models is a rule:** 1M for Opus 5 and `[1m]` models, or once a session passes 200k; otherwise 200k. A non-Opus model with a 1M window reads low until it passes 200k.
 - **Crowded menu bars:** if the menu bar is very full, macOS may still hide some icon (possibly this one). ⌘-drag icons to rearrange them.
 - **First turn of a session:** it starts counting from the first reply, so the system prompt isn't counted as part of turn 1.
+
+---
+
+<p align="center"><a href="https://chaekim.vercel.app"><img src="brand/readme/seal.svg" width="10" height="10" alt=""> <sub>a Chae Kim build</sub></a></p>
